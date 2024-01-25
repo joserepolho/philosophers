@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 00:58:37 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/22 07:05:13 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/22 22:35:57 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,10 @@ int	main(int ac, char **av)
 	if (!args)
 		return (error_status("Error\nMemory allocation failed!\n", &args, 0, 0));
 	if (!get_args(ac, av, &args))
-		return (error_status("Error\nFailure getting current time!\n", &args, 0, 0));
-	philos = malloc(args->philos_number * sizeof(t_stats));
+		return (error_status("Error\nFailure getting args!\n", &args, 0, 0));
+	philos = malloc(args->philos_number * sizeof(t_stats *));
 	if (!philos)
 		return (error_status("Error\nMemory allocation failed!\n", &args, &philos, 0));
-	philos = 0;
-	meals = 0;
 	if (args->meals_to_survive)
 	{
 		meals = malloc(sizeof(t_meals));
@@ -46,14 +44,13 @@ int	main(int ac, char **av)
 					&args, &philos, &meals));
 		meals->meal_number = 0;
 	}
+	else
+		meals = 0;
 	if (!exec_set(&philos, &args, &meals))
 		return (error_status("Error\nExec initiation failed!\n", &args, &philos, &meals));
-	free_all(&args, &philos, &meals);
-	return (0);
-}
-/*
 	exec_start(&args, &philos);
 	while (args->end)
 		continue ;
+	free_all(&args, &philos, &meals);
 	return (0);
-}*/
+}

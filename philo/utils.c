@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 01:00:47 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/22 07:03:38 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/23 01:22:59 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,25 @@ void	free_all(t_info **args, t_stats ***philos, t_meals **meals)
 	int	i;
 
 	i = -1;
-	if (*philos)
+	if ((*philos))
 	{
-	while (*philos[++i])
-		free(philos[i]);
-	free(*philos);
+		while ((*philos)[++i])
+		{
+			pthread_join((*philos)[i]->philo, NULL);
+			pthread_join((*philos)[i]->check_life, NULL);
+			free((*philos)[i]);
+		}
+		free(*philos);
 	}
+	i = -1;
 	if (*meals)
-		free(*meals);
-	if (*args)
-	i = (*args)->philos_number;
 	{
-		while (--i)
-			pthread_mutex_destroy(&(*args)->forks[i]);
+		free(*meals);
+	}
+	if (*args)
+	{
+		free((*args)->forks);
+		free((*args)->wrt_eat);
 		free(*args);
 	}
 }

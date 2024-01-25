@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 00:07:02 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/22 04:04:43 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/25 22:48:56 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,22 @@ void	ft_wait(int wait_time)
 
 void	eat_meal(t_stats *philo)
 {
-	pthread_mutex_lock(&philo->forks_mutex[philo->left_fork]);
-	printf("[%d]\tPhilosopher %d has taken the left fork",
-			curr_time() - philo->args->start_time, philo->philo_number);
-	pthread_mutex_lock(&philo->forks_mutex[philo->right_fork]);
-	printf("[%d]\tPhilosopher %d has taken the right fork",
-			curr_time() - philo->args->start_time, philo->philo_number);
+	pthread_mutex_lock(&philo->args->forks[philo->left_fork]);
+	printf("\n[%d] %d has taken a fork",
+			curr_time() - philo->args->start_time, philo->philo_number + 1);
+	pthread_mutex_lock(&philo->args->forks[philo->right_fork]);
+	printf("\n[%d] %d has taken a fork",
+			curr_time() - philo->args->start_time, philo->philo_number + 1);
+	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	philo->last_meal_time = curr_time();
-	printf("[%d]\tPhilosopher %d is eating",
-			curr_time() - philo->args->start_time, philo->philo_number);
+	philo->args->eat = 1;
+	printf("\n[%d] %d is eating",
+			curr_time() - philo->args->start_time, philo->philo_number + 1);
 	ft_wait(philo->args->time_to_eat);
-	philo->meal->meal_number++;
-	pthread_mutex_unlock(&philo->forks_mutex[philo->left_fork]);
-	pthread_mutex_unlock(&philo->forks_mutex[philo->right_fork]);
+	philo->args->eat = 0;
+	if (philo->meal)
+		philo->meal->meal_number++;
+	pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
+	pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
+	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 }
