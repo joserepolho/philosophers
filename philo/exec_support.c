@@ -6,14 +6,15 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 00:07:02 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/25 22:48:56 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/26 23:30:39 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_wait(int wait_time)
+void	ft_wait(int wait_time, t_stats *philo)
 {
+	(void)philo;
 	int	start_time;
 	int	elapsed_time;
 
@@ -21,29 +22,58 @@ void	ft_wait(int wait_time)
 	elapsed_time = 0;
 	while (elapsed_time < wait_time)
 	{
+
 		usleep(500);
 		elapsed_time = curr_time() - start_time;
 	}
 }
 
-void	eat_meal(t_stats *philo)
+void	take_left_fork(t_stats *philo)
 {
 	pthread_mutex_lock(&philo->args->forks[philo->left_fork]);
-	printf("\n[%d] %d has taken a fork",
-			curr_time() - philo->args->start_time, philo->philo_number + 1);
-	pthread_mutex_lock(&philo->args->forks[philo->right_fork]);
-	printf("\n[%d] %d has taken a fork",
-			curr_time() - philo->args->start_time, philo->philo_number + 1);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
+	printf("\n[%d] %d has taken a forkk",
+			curr_time() - philo->args->start_time, philo->philo_number + 1);
+	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+
+}
+
+void	take_right_fork(t_stats *philo)
+{
+	pthread_mutex_lock(&philo->args->forks[philo->right_fork]);
+	pthread_mutex_lock(&philo->args->wrt_eat[0]);
+	printf("\n[%d] %d has taken a fork",
+			curr_time() - philo->args->start_time, philo->philo_number + 1);
+	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+}
+
+int	eat_meal(t_stats *philo)
+{
+	if (philo->philo_number % 2)
+	{
+		take_left_fork(philo);
+		take_right_fork(philo);
+	}
+	else
+	{
+		take_right_fork(philo);
+		take_left_fork(philo);
+	}
+	pthread_mutex_lock(&philo->args->wrt_eat[1]);
 	philo->last_meal_time = curr_time();
-	philo->args->eat = 1;
+	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	printf("\n[%d] %d is eating",
 			curr_time() - philo->args->start_time, philo->philo_number + 1);
-	ft_wait(philo->args->time_to_eat);
-	philo->args->eat = 0;
+	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+	if (!philo->args->end)
+		ft_wait(philo->args->time_to_eat, philo);
 	if (philo->meal)
 		philo->meal->meal_number++;
+	usleep(1);
 	pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
 	pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
-	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+	pthread_mutex_unlock(&philo->args->wrt_eat[1]);
+	if (check_life(philo))
+		return (1);
+	return (0);
 }

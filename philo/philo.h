@@ -48,8 +48,10 @@ int		curr_time(void);
 int		error_status(char *err, t_info **args, t_stats ***philos, t_meals **meals);
 int		exec_set(t_stats ***philos, t_info **args, t_meals **meals);
 int		exec_start(t_info **args, t_stats ***philos);
-void	ft_wait(int wait_time);
-void	eat_meal(t_stats *philo);
+void	ft_wait(int wait_time, t_stats *philo);
+int		eat_meal(t_stats *philo);
 void	free_all(t_info **args, t_stats ***philos, t_meals **meals);
+int		check_meals(t_stats *philo);
+int		check_life(t_stats *philo);
 
 #endif
