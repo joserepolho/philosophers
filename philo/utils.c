@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 01:00:47 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/27 03:50:42 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/27 18:55:41 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	free_all(t_info **args, t_stats ***philos, t_meals **meals)
 	i = -1;
 	if ((*philos))
 	{
-		while ((*philos)[++i])
+		while (++i < (*args)->philos_number)
 		{
 			if (pthread_join((*philos)[i]->philo, NULL))
 				return (0);

@@ -6,7 +6,7 @@ PTHEAD_FLAG = -pthread
 
 NAME = philo
 
-SRCS_FILE =	philo.c \
+SRCS_FILE =	philo.c	\
 			utils.c	\
 			exec_set.c	\
 			exec_start.c	\
