@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 01:06:34 by dinunes-          #+#    #+#             */
-/*   Updated: 2024/01/26 23:31:07 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/27 04:27:00 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,7 @@ void	routine(void *arg)
 		return ;
 	}
 	else
-	{
 			lifecycle(philo);
-	}
 }
 
 void	lifecycle(t_philo *philo)
@@ -34,9 +32,7 @@ void	lifecycle(t_philo *philo)
 	while (1)
 	{
 		if (philo->data->dead || philo->data->full)
-		{
 			return ;
-		}
 		forks(philo, 1);
 		actions(philo, 1);
 		forks(philo, 2);

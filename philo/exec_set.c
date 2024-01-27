@@ -69,3 +69,12 @@ int	exec_set(t_stats ***philos, t_info **args, t_meals **meals)
 	}
 	return (1);
 }
+
+int	curr_time(void)
+{
+	struct timeval	curr_time;
+
+	if (gettimeofday(&curr_time, NULL) == -1)
+		return (-1);
+	return ((curr_time.tv_sec * 1000) + (curr_time.tv_usec / 1000));
+}

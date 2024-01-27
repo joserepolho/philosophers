@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 00:58:37 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/26 23:04:39 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/27 03:32:29 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ int	main(int ac, char **av)
 		meals = 0;
 	if (!exec_set(&philos, &args, &meals))
 		return (error_status("Error\nExec initiation failed!\n", &args, &philos, &meals));
-	exec_start(&args, &philos);
-	while (args->end)
-		continue ;
-	free_all(&args, &philos, &meals);
+	if (!exec_start(&args, &philos))
+		return (error_status("Error\nThread exec failed!\n", &args, &philos, &meals));
+	if (!free_all(&args, &philos, &meals))
+		return (error_status("Error\nThread join failed!\n", &args, &philos, &meals));
 	return (0);
 }

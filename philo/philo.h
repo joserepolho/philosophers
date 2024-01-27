@@ -37,6 +37,7 @@ typedef struct	s_info
 	int				eat;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*wrt_eat;
+	pthread_mutex_t	life;
 }				t_info;
 
 int		check_args(int ac, char **av);
@@ -50,7 +51,7 @@ int		exec_set(t_stats ***philos, t_info **args, t_meals **meals);
 int		exec_start(t_info **args, t_stats ***philos);
 void	ft_wait(int wait_time, t_stats *philo);
 int		eat_meal(t_stats *philo);
-void	free_all(t_info **args, t_stats ***philos, t_meals **meals);
+int		free_all(t_info **args, t_stats ***philos, t_meals **meals);
 int		check_meals(t_stats *philo);
 int		check_life(t_stats *philo);
 
