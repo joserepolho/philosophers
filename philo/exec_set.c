@@ -37,6 +37,7 @@ int	get_args(int ac, char **av, t_info **args)
 			return (0);
 	}
 	(*args)->end = 0;
+	(*args)->eaten = 0;
 	(*args)->forks = malloc((*args)->philos_number * sizeof(pthread_mutex_t));
 	if (!(*args)->forks)
 		return (0);

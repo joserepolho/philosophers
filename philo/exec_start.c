@@ -6,39 +6,11 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 23:47:43 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/27 22:42:11 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/28 04:09:03 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	check_meals(t_stats *philo)
-{
-	int		i;
-
-	i = -1;
-	while (++i < philo->args->philos_number)
-	{
-		if (philo->meal->meal_number >= philo->args->meals_to_survive)
-		{
-			if (i == philo->args->philos_number)
-				philo->args->end = 1;
-		}
-	}
-	return (philo->args->end);
-}
-
-int	check_life(t_stats *philo)
-{
-	if (curr_time() - philo->last_meal_time >= philo->args->time_to_die)
-		{
-			printf("%d %d died\n",
-					curr_time() - philo->args->start_time, philo->philo_number + 1);
-			philo->args->end = 1;
-			return (1);
-		}
-		return (0);
-}
 
 void	action(void *philos)
 {
@@ -51,19 +23,13 @@ void	action(void *philos)
 			return ;
 		eat_meal(philo);
 		pthread_mutex_lock(&philo->args->wrt_eat[0]);
-		if (check_life(philo))
-			break ;
 		printf("%d %d is sleeping\n",
 				curr_time() - philo->args->start_time, philo->philo_number + 1);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 			ft_wait(philo->args->time_to_sleep, philo);
-		if (check_life(philo))
-			break ;
 		pthread_mutex_lock(&philo->args->wrt_eat[0]);
 		printf("%d %d is thinking\n",
 				curr_time() - philo->args->start_time, philo->philo_number + 1);
-		if (check_life(philo))
-			break ;
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 	}
 }

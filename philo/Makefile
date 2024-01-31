@@ -11,6 +11,7 @@ SRCS_FILE =	philo.c	\
 			exec_set.c	\
 			exec_start.c	\
 			exec_support.c	\
+			philo_status.c	\
 
 SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS = $(SRCS:%.c=%.o)

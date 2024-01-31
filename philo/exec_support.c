@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 00:07:02 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/27 22:42:41 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/01/28 04:07:44 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,15 @@ int	eat_meal(t_stats *philo)
 	printf("%d %d is eating\n",
 			curr_time() - philo->args->start_time, philo->philo_number + 1);
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+	philo->eating = 1;
 	if (!philo->args->end)
 		ft_wait(philo->args->time_to_eat, philo);
+	philo->eating = 0;
 	if (philo->meal)
 		philo->meal->meal_number++;
 	usleep(1);
 	pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
 	pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
 	pthread_mutex_unlock(&philo->args->wrt_eat[1]);
-	if (check_life(philo))
-		return (1);
 	return (0);
 }

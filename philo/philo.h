@@ -21,6 +21,7 @@ typedef struct	s_stats
 	int				last_meal_time;
 	int				left_fork;
 	int				right_fork;
+	int				eating;
 	struct s_meals	*meal;
 	struct s_info	*args;
 }				t_stats;
@@ -35,6 +36,7 @@ typedef struct	s_info
 	int				time_to_sleep;
 	int				meals_to_survive;
 	int				eat;
+	int				eaten;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*wrt_eat;
 	pthread_mutex_t	life;
@@ -54,5 +56,6 @@ int		eat_meal(t_stats *philo);
 int		free_all(t_info **args, t_stats ***philos, t_meals **meals);
 int		check_meals(t_stats *philo);
 int		check_life(t_stats *philo);
+void	philo_status(t_info *args, t_stats **philo);
 
 #endif
