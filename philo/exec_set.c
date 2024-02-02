@@ -27,7 +27,7 @@ int	get_args(int ac, char **av, t_info **args)
 	if (ac == 6)
 		(*args)->meals_to_survive = ft_atoi(av[5]);
 	(*args)->eat = 0;
-	i = 3;
+	i = 4;
 	(*args)->wrt_eat = malloc(i * sizeof(pthread_mutex_t));
 	if (!(*args)->wrt_eat)
 		return (0);
@@ -59,7 +59,7 @@ int	exec_set(t_stats ***philos, t_info **args, t_meals **meals)
 	{
 		(*philos)[i] = malloc(sizeof(t_stats));
 		(*philos)[i]->meal = (*meals);
-		(*philos)[i]->last_meal_time = 0;
+		(*philos)[i]->last_meal_time = curr_time();
 		(*philos)[i]->philo_number = i;
 		(*philos)[i]->args = (*args);
 		(*philos)[i]->left_fork = i;

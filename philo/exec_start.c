@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 23:47:43 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/01/28 04:09:03 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/02 03:24:09 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,25 @@ void	action(void *philos)
 	philo = (t_stats *)philos;
 	while (1)
 	{
-		if (philo->args->end)
+		if (philo->args->end || philo->args->philos_number == 1)
 			return ;
 		eat_meal(philo);
-		pthread_mutex_lock(&philo->args->wrt_eat[0]);
-		printf("%d %d is sleeping\n",
-				curr_time() - philo->args->start_time, philo->philo_number + 1);
-		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
-			ft_wait(philo->args->time_to_sleep, philo);
-		pthread_mutex_lock(&philo->args->wrt_eat[0]);
-		printf("%d %d is thinking\n",
-				curr_time() - philo->args->start_time, philo->philo_number + 1);
-		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+		if (!philo->args->end)
+		{
+			pthread_mutex_lock(&philo->args->wrt_eat[0]);
+			printf("%d %d is sleeping\n",
+					curr_time() - philo->args->start_time, philo->philo_number + 1);
+			pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+		}
+		ft_wait(philo->args->time_to_sleep, philo);
+		if (!philo->args->end)
+		{
+			pthread_mutex_lock(&philo->args->wrt_eat[0]);
+			printf("%d %d is thinking\n",
+					curr_time() - philo->args->start_time, philo->philo_number + 1);
+			pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+		}
+		usleep(800);
 	}
 }
 
@@ -41,7 +48,6 @@ int	exec_start(t_info **args, t_stats ***philos)
 	i = -1;
 	while (++i < (*args)->philos_number)
 	{
-		(*philos)[i]->last_meal_time = curr_time();
 		if (pthread_create(&(*philos)[i]->philo, NULL, (void *)action, (*philos)[i]))
 			return (0);
 	}

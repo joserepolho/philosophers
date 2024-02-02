@@ -37,6 +37,7 @@ typedef struct	s_info
 	int				meals_to_survive;
 	int				eat;
 	int				eaten;
+	int				cycle;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*wrt_eat;
 	pthread_mutex_t	life;
@@ -56,6 +57,7 @@ int		eat_meal(t_stats *philo);
 int		free_all(t_info **args, t_stats ***philos, t_meals **meals);
 int		check_meals(t_stats *philo);
 int		check_life(t_stats *philo);
-void	philo_status(t_info *args, t_stats **philo);
+void	if_ded(t_info *args, t_stats **philo);
+void	if_full(t_info **args, t_stats ***philo);
 
 #endif
