@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 01:00:47 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/01 02:04:08 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:48:39 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,7 @@ int	free_all(t_info **args, t_stats ***philos, t_meals **meals)
 		free(*philos);
 	}
 	if (*meals)
-	{
 		free(*meals);
-	}
 	if (*args)
 	{
 		pthread_mutex_destroy((*args)->forks);

@@ -6,24 +6,39 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/27 21:26:29 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/02 03:32:49 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/03 04:11:42 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void    ft_ded(t_info **args, t_stats ***philo, int i)
+void	ft_fed(t_info **args, t_stats ***philo)
 {
-    if ((*args)->end || (*args)->eaten || (*philo)[i]->eating)
-	{
-        return ;
-	}
-    (*args)->end = 1;
-    printf("%d %d died\n",
-			curr_time() - (*philo)[i]->args->start_time, (*philo)[i]->philo_number + 1);
+	int	i;
+
+	i = 0;
+	
 }
 
-void	if_ded(t_info *args, t_stats **philo)
+void    ft_ded(t_info **args, t_stats ***philo, int i)
+{
+	pthread_mutex_lock(&(*philo)[i]->args->wrt_eat[1]);
+    if ((*args)->end || (*philo)[i]->eating)
+	{
+		pthread_mutex_unlock(&(*philo)[i]->args->wrt_eat[1]);
+        return ;
+	}
+	else
+		pthread_mutex_unlock(&(*philo)[i]->args->wrt_eat[1]);
+	pthread_mutex_lock(&(*philo)[i]->args->wrt_eat[3]);
+    (*args)->end = 1;
+	pthread_mutex_unlock(&(*philo)[i]->args->wrt_eat[3]);
+    printf("%d %d died\n",
+			curr_time() - (*philo)[i]->args->start_time
+			, (*philo)[i]->philo_number + 1);
+}
+
+void	if_ded_or_fed(t_info *args, t_stats **philo)
 {
 	int		i;
 
@@ -32,29 +47,22 @@ void	if_ded(t_info *args, t_stats **philo)
 		i = -1;
 		while (++i < args->philos_number)
 		{
+			pthread_mutex_lock(&philo[i]->args->wrt_eat[2]);
 			if (curr_time() - philo[i]->last_meal_time >= args->time_to_die)
 			{
+				pthread_mutex_unlock(&philo[i]->args->wrt_eat[2]);
+				pthread_mutex_lock(&philo[i]->args->wrt_eat[1]);
                 if (!args->end && !philo[i]->eating)
+				{
+					pthread_mutex_unlock(&philo[i]->args->wrt_eat[1]);
                     ft_ded(&args, &philo, i);
+				}
+				else
+					pthread_mutex_unlock(&philo[i]->args->wrt_eat[1]);
             }
+			else
+				pthread_mutex_unlock(&philo[i]->args->wrt_eat[2]);
 		}
-	}
-}
-
-void	if_full(t_info **args, t_stats ***philo)
-{
-	int	i;
-
-	while (!((*args)->end))
-	{
-		i = -1;
-		while (++i < (*args)->philos_number)
-		{
-			if ((*philo)[i]->meal->meal_number >= (*args)->meals_to_survive)
-					(*args)->eaten++;
-		}
-					pthread_mutex_lock(&(*philo)[i]->args->wrt_eat[0]);
-		if ((*args)->eaten == (*args)->philos_number)
-			(*args)->end = 1;
+		ft_fed(&args, &philo);
 	}
 }

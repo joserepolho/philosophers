@@ -57,7 +57,7 @@ int		eat_meal(t_stats *philo);
 int		free_all(t_info **args, t_stats ***philos, t_meals **meals);
 int		check_meals(t_stats *philo);
 int		check_life(t_stats *philo);
-void	if_ded(t_info *args, t_stats **philo);
-void	if_full(t_info **args, t_stats ***philo);
+void	if_ded_or_fed(t_info *args, t_stats **philo);
+void	if_full(t_info *args, t_stats **philo);
 
 #endif

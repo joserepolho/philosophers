@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 00:07:02 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/02 03:23:53 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:43:10 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,71 +21,106 @@ void	ft_wait(int wait_time, t_stats *philo)
 	elapsed_time = 0;
 	while (elapsed_time < wait_time)
 	{
+		pthread_mutex_lock(&philo->args->wrt_eat[3]);
 		if (philo->args->end)
+		{
+			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 			return ;
+		}
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		usleep(500);
 		elapsed_time = curr_time() - start_time;
 	}
 }
 
-void	take_left_fork(t_stats *philo)
+int	take_left_fork(t_stats *philo)
 {
 	pthread_mutex_lock(&philo->args->forks[philo->left_fork]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
+	pthread_mutex_lock(&philo->args->wrt_eat[3]);
 	if (philo->args->end)
 	{
 		pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
-		return ;
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		return (0);
 	}
 		printf("%d %d has taken a fork\n",
 				curr_time() - philo->args->start_time, philo->philo_number + 1);
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
-
+	pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+	return (1);
 }
 
-void	take_right_fork(t_stats *philo)
+int	take_right_fork(t_stats *philo)
 {
 	pthread_mutex_lock(&philo->args->forks[philo->right_fork]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
+	pthread_mutex_lock(&philo->args->wrt_eat[3]);
 	if (philo->args->end)
 	{
 		pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
-		return ;
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		return (0);
 	}
 	printf("%d %d has taken a fork\n",
 			curr_time() - philo->args->start_time, philo->philo_number + 1);
+	pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+	return (1);
 }
 
 int	eat_meal(t_stats *philo)
 {
+	int	i;
+	int	j;
+	
 	if (philo->philo_number % 2)
 	{
-		take_left_fork(philo);
-		take_right_fork(philo);
+		i = take_left_fork(philo);
+		j = take_right_fork(philo);
 	}
 	else
 	{
-		take_right_fork(philo);
-		take_left_fork(philo);
+		j = take_right_fork(philo);
+		i = take_left_fork(philo);
 	}
+	pthread_mutex_lock(&philo->args->wrt_eat[1]);
 	philo->eating = 1;
+	pthread_mutex_unlock(&philo->args->wrt_eat[1]);
+	pthread_mutex_lock(&philo->args->wrt_eat[2]);
 	philo->last_meal_time = curr_time();
+	pthread_mutex_unlock(&philo->args->wrt_eat[2]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
+	pthread_mutex_lock(&philo->args->wrt_eat[3]);
 	if (!philo->args->end)
 	{
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		printf("%d %d is eating\n",
 				curr_time() - philo->args->start_time, philo->philo_number + 1);
 	}
+	else
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+		pthread_mutex_lock(&philo->args->wrt_eat[3]);
 	if (!philo->args->end)
+	{
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		ft_wait(philo->args->time_to_eat, philo);
+	}
+	else
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 	if (philo->args->meals_to_survive)
+	{
 		philo->meal->meal_number++;
+		if (philo->meal->meal_number == philo->args->meals_to_survive)
+			philo->args->eaten++;
+	}
 	philo->eating = 0;
-	pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
-	pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
+	if (i)
+		pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
+	if (j)
+		pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
 	return (0);
 }

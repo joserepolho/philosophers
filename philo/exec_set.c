@@ -27,7 +27,7 @@ int	get_args(int ac, char **av, t_info **args)
 	if (ac == 6)
 		(*args)->meals_to_survive = ft_atoi(av[5]);
 	(*args)->eat = 0;
-	i = 4;
+	i = 5;
 	(*args)->wrt_eat = malloc(i * sizeof(pthread_mutex_t));
 	if (!(*args)->wrt_eat)
 		return (0);
