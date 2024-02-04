@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 01:00:47 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/04 19:42:07 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 19:54:31 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,11 @@ int	ft_isdigit(char *c)
 		i++;
 	while (c[i])
 	{
-		if (c[i] >= '0' && c[i] <= '9')
-			i++;
+		if (c[i] < '0' || c[i] > '9')
+			return (0);
+		i++;
 	}
-	if (!c[i])
-		return (1);
-	else
-		return (0);
+	return (1);
 }
 
 int	ft_atoi(const char *nptr)

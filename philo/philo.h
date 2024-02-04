@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/04 19:33:17 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/04 19:33:49 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 19:44:23 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ typedef struct s_info
 	int				cycle;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*wrt_eat;
-	pthread_mutex_t	life;
 }				t_info;
 
 int		check_args(int ac, char **av);
