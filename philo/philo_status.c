@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/27 21:26:29 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/04 04:22:53 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 19:36:13 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,27 +31,27 @@ void	ft_fed(t_info **args, t_stats ***philo)
 			i++;
 		}
 		pthread_mutex_lock(&(**philo)->args->wrt_eat[4]);
-				(*args)->eaten = 1;
+		(*args)->eaten = 1;
 		pthread_mutex_unlock(&(**philo)->args->wrt_eat[4]);
 	}
 }
 
-void    ft_ded(t_info **args, t_stats ***philo, int i)
+void	ft_ded(t_info **args, t_stats ***philo, int i)
 {
 	pthread_mutex_lock(&(*philo)[i]->args->wrt_eat[1]);
-    if ((*args)->end || (*philo)[i]->eating)
+	if ((*args)->end || (*philo)[i]->eating)
 	{
 		pthread_mutex_unlock(&(*philo)[i]->args->wrt_eat[1]);
-        return ;
+		return ;
 	}
 	else
 		pthread_mutex_unlock(&(*philo)[i]->args->wrt_eat[1]);
 	pthread_mutex_lock(&(*philo)[i]->args->wrt_eat[3]);
-    (*args)->end = 1;
+	(*args)->end = 1;
 	pthread_mutex_unlock(&(*philo)[i]->args->wrt_eat[3]);
-    printf("%d %d died\n",
-			curr_time() - (*philo)[i]->args->start_time
-			, (*philo)[i]->philo_number + 1);
+	printf("%d %d died\n",
+		curr_time() - (*philo)[i]->args->start_time,
+		(*philo)[i]->philo_number + 1);
 }
 
 void	if_ded_or_fed(t_info *args, t_stats **philo)
@@ -68,14 +68,14 @@ void	if_ded_or_fed(t_info *args, t_stats **philo)
 			{
 				pthread_mutex_unlock(&philo[i]->args->wrt_eat[2]);
 				pthread_mutex_lock(&philo[i]->args->wrt_eat[1]);
-                if (!args->end && !philo[i]->eating)
+				if (!args->end && !philo[i]->eating)
 				{
 					pthread_mutex_unlock(&philo[i]->args->wrt_eat[1]);
-                    ft_ded(&args, &philo, i);
+					ft_ded(&args, &philo, i);
 				}
 				else
 					pthread_mutex_unlock(&philo[i]->args->wrt_eat[1]);
-            }
+			}
 			else
 				pthread_mutex_unlock(&philo[i]->args->wrt_eat[2]);
 		}

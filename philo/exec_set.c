@@ -12,21 +12,10 @@
 
 #include "philo.h"
 
-int	get_args(int ac, char **av, t_info **args)
-{	
+int	get_mutexes(t_info **args)
+{
 	int	i;
 
-	(*args)->start_time = curr_time();
-	if (!(*args)->start_time)
-		return (0);
-	(*args)->philos_number = ft_atoi(av[1]);
-	(*args)->time_to_die = ft_atoi(av[2]);
-	(*args)->time_to_eat = ft_atoi(av[3]);
-	(*args)->time_to_sleep = ft_atoi(av[4]);
-	(*args)->meals_to_survive = 0;
-	if (ac == 6)
-		(*args)->meals_to_survive = ft_atoi(av[5]);
-	(*args)->eat = 0;
 	i = 5;
 	(*args)->wrt_eat = malloc(i * sizeof(pthread_mutex_t));
 	if (!(*args)->wrt_eat)
@@ -47,6 +36,24 @@ int	get_args(int ac, char **av, t_info **args)
 		if (pthread_mutex_init(&(*args)->forks[i], NULL))
 			return (0);
 	}
+	return (1);
+}
+
+int	get_args(int ac, char **av, t_info **args)
+{
+	(*args)->start_time = curr_time();
+	if (!(*args)->start_time)
+		return (0);
+	(*args)->philos_number = ft_atoi(av[1]);
+	(*args)->time_to_die = ft_atoi(av[2]);
+	(*args)->time_to_eat = ft_atoi(av[3]);
+	(*args)->time_to_sleep = ft_atoi(av[4]);
+	(*args)->meals_to_survive = 0;
+	if (ac == 6)
+		(*args)->meals_to_survive = ft_atoi(av[5]);
+	(*args)->eat = 0;
+	if (!get_mutexes(args))
+		return (0);
 	return (1);
 }
 

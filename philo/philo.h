@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/04 19:33:17 by joaoribe          #+#    #+#             */
+/*   Updated: 2024/02/04 19:33:49 by joaoribe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -7,13 +19,13 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-typedef struct	s_meals
+typedef struct s_meals
 {
 	pthread_t		check_meals;
 	int				meal_number;
 }				t_meals;
 
-typedef struct	s_stats
+typedef struct s_stats
 {
 	pthread_t		philo;
 	pthread_t		check_life;
@@ -27,7 +39,7 @@ typedef struct	s_stats
 	struct s_info	*args;
 }				t_stats;
 
-typedef struct	s_info
+typedef struct s_info
 {
 	int				start_time;
 	int				end;

@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 01:00:47 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/04 03:55:03 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 19:42:07 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,28 @@ int	ft_atoi(const char *nptr)
 		i++;
 	}
 	return (res);
+}
+
+void	ft_wait(int wait_time, t_stats *philo)
+{
+	int	start_time;
+	int	elapsed_time;
+
+	start_time = curr_time();
+	elapsed_time = 0;
+	while (elapsed_time < wait_time)
+	{
+		pthread_mutex_lock(&philo->args->wrt_eat[3]);
+		pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
+		if (philo->args->end || philo->args->eaten)
+		{
+			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+			pthread_mutex_unlock(&philo->args->wrt_eat[4]);
+			return ;
+		}
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
+		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		usleep(500);
+		elapsed_time = curr_time() - start_time;
+	}
 }
