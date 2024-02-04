@@ -6,17 +6,19 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 01:00:47 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/03 03:48:39 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 03:55:03 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	free_all(t_info **args, t_stats ***philos, t_meals **meals)
+int	free_all(t_info **args, t_stats ***philos)
 {
 	int	i;
 
 	i = -1;
+	if (!(philos) || !(args))
+		return (1);
 	if ((*philos))
 	{
 		while (++i < (*args)->philos_number)
@@ -27,8 +29,6 @@ int	free_all(t_info **args, t_stats ***philos, t_meals **meals)
 		}
 		free(*philos);
 	}
-	if (*meals)
-		free(*meals);
 	if (*args)
 	{
 		pthread_mutex_destroy((*args)->forks);
@@ -40,9 +40,9 @@ int	free_all(t_info **args, t_stats ***philos, t_meals **meals)
 	return (1);
 }
 
-int	error_status(char *err, t_info **args, t_stats ***philos, t_meals **meals)
+int	error_status(char *err, t_info **args, t_stats ***philos)
 {
-	free_all(args, philos, meals);
+	free_all(args, philos);
 	printf("%s\n", err);
 	return (0);
 }

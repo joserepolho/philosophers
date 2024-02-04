@@ -50,7 +50,7 @@ int	get_args(int ac, char **av, t_info **args)
 	return (1);
 }
 
-int	exec_set(t_stats ***philos, t_info **args, t_meals **meals)
+int	exec_set(t_stats ***philos, t_info **args)
 {
 	int	i;
 
@@ -58,7 +58,7 @@ int	exec_set(t_stats ***philos, t_info **args, t_meals **meals)
 	while (++i < (*args)->philos_number)
 	{
 		(*philos)[i] = malloc(sizeof(t_stats));
-		(*philos)[i]->meal = (*meals);
+		(*philos)[i]->meals = 0;
 		(*philos)[i]->last_meal_time = curr_time();
 		(*philos)[i]->philo_number = i;
 		(*philos)[i]->args = (*args);

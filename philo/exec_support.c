@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 00:07:02 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/03 03:43:10 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 05:15:03 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,14 @@ void	ft_wait(int wait_time, t_stats *philo)
 	while (elapsed_time < wait_time)
 	{
 		pthread_mutex_lock(&philo->args->wrt_eat[3]);
-		if (philo->args->end)
+		pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
+		if (philo->args->end || philo->args->eaten)
 		{
 			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+			pthread_mutex_unlock(&philo->args->wrt_eat[4]);
 			return ;
 		}
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		usleep(500);
 		elapsed_time = curr_time() - start_time;
@@ -38,7 +41,7 @@ int	take_left_fork(t_stats *philo)
 	pthread_mutex_lock(&philo->args->forks[philo->left_fork]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	pthread_mutex_lock(&philo->args->wrt_eat[3]);
-	if (philo->args->end)
+	if (philo->args->end || philo->args->eaten)
 	{
 		pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
@@ -57,7 +60,7 @@ int	take_right_fork(t_stats *philo)
 	pthread_mutex_lock(&philo->args->forks[philo->right_fork]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	pthread_mutex_lock(&philo->args->wrt_eat[3]);
-	if (philo->args->end)
+	if (philo->args->end || philo->args->eaten)
 	{
 		pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
@@ -94,7 +97,7 @@ int	eat_meal(t_stats *philo)
 	pthread_mutex_unlock(&philo->args->wrt_eat[2]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	pthread_mutex_lock(&philo->args->wrt_eat[3]);
-	if (!philo->args->end)
+	if (!philo->args->end && !philo->args->eaten)
 	{
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		printf("%d %d is eating\n",
@@ -113,9 +116,9 @@ int	eat_meal(t_stats *philo)
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 	if (philo->args->meals_to_survive)
 	{
-		philo->meal->meal_number++;
-		if (philo->meal->meal_number == philo->args->meals_to_survive)
-			philo->args->eaten++;
+		pthread_mutex_lock(&philo->args->wrt_eat[2]);
+		philo->meals++;
+		pthread_mutex_unlock(&philo->args->wrt_eat[2]);
 	}
 	philo->eating = 0;
 	if (i)

@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 23:47:43 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/02 21:40:55 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 05:19:06 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,32 @@ void	action(void *philos)
 	{
 		pthread_mutex_lock(&philo->args->wrt_eat[1]);
 		pthread_mutex_lock(&philo->args->wrt_eat[3]);
-		if (philo->args->end || philo->args->philos_number == 1)
+			pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
+		if (philo->args->end || philo->args->eaten
+			|| philo->args->philos_number == 1)
 		{
+			pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 			pthread_mutex_unlock(&philo->args->wrt_eat[1]);
 			return ;
 		}
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[1]);
 		eat_meal(philo);
 		pthread_mutex_lock(&philo->args->wrt_eat[3]);
-		if (!philo->args->end)
+		pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
+		if (!philo->args->end && !philo->args->eaten)
 		{
+			pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+			pthread_mutex_lock(&philo->args->wrt_eat[4]);
+			if (philo->args->eaten)
+			{
+				pthread_mutex_unlock(&philo->args->wrt_eat[4]);
+				return ;
+			}
+			pthread_mutex_unlock(&philo->args->wrt_eat[4]);
 			pthread_mutex_lock(&philo->args->wrt_eat[0]);
 			printf("%d %d is sleeping\n",
 					curr_time() - philo->args->start_time, philo->philo_number + 1);
@@ -43,16 +56,28 @@ void	action(void *philos)
 			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 		ft_wait(philo->args->time_to_sleep, philo);
 		pthread_mutex_lock(&philo->args->wrt_eat[3]);
-		if (!philo->args->end)
+		pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
+		if (!philo->args->end && !philo->args->eaten)
 		{
+			pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+			pthread_mutex_lock(&philo->args->wrt_eat[4]);
+			if (philo->args->eaten)
+			{
+				pthread_mutex_unlock(&philo->args->wrt_eat[4]);
+				return ;
+			}
+			pthread_mutex_unlock(&philo->args->wrt_eat[4]);
 			pthread_mutex_lock(&philo->args->wrt_eat[0]);
 			printf("%d %d is thinking\n",
 					curr_time() - philo->args->start_time, philo->philo_number + 1);
 			pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 		}
 		else
+		{
 			pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+			pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
+		}
 		usleep(800);
 	}
 }
