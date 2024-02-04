@@ -6,7 +6,7 @@
 /*   By: joaoribe <joaoribe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 00:07:02 by joaoribe          #+#    #+#             */
-/*   Updated: 2024/02/04 05:15:03 by joaoribe         ###   ########.fr       */
+/*   Updated: 2024/02/04 18:55:46 by joaoribe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,17 +41,20 @@ int	take_left_fork(t_stats *philo)
 	pthread_mutex_lock(&philo->args->forks[philo->left_fork]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	pthread_mutex_lock(&philo->args->wrt_eat[3]);
+	pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
 	if (philo->args->end || philo->args->eaten)
 	{
 		pthread_mutex_unlock(&philo->args->forks[philo->left_fork]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 		return (0);
 	}
 		printf("%d %d has taken a fork\n",
 				curr_time() - philo->args->start_time, philo->philo_number + 1);
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 	pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+	pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 	return (1);
 }
 
@@ -60,17 +63,20 @@ int	take_right_fork(t_stats *philo)
 	pthread_mutex_lock(&philo->args->forks[philo->right_fork]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	pthread_mutex_lock(&philo->args->wrt_eat[3]);
+	pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
 	if (philo->args->end || philo->args->eaten)
 	{
 		pthread_mutex_unlock(&philo->args->forks[philo->right_fork]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 		return (0);
 	}
 	printf("%d %d has taken a fork\n",
 			curr_time() - philo->args->start_time, philo->philo_number + 1);
-	pthread_mutex_unlock(&philo->args->wrt_eat[3]);
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
+	pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+	pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 	return (1);
 }
 
@@ -97,14 +103,19 @@ int	eat_meal(t_stats *philo)
 	pthread_mutex_unlock(&philo->args->wrt_eat[2]);
 	pthread_mutex_lock(&philo->args->wrt_eat[0]);
 	pthread_mutex_lock(&philo->args->wrt_eat[3]);
+	pthread_mutex_lock(&(philo)->args->wrt_eat[4]);
 	if (!philo->args->end && !philo->args->eaten)
 	{
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
 		printf("%d %d is eating\n",
 				curr_time() - philo->args->start_time, philo->philo_number + 1);
 	}
 	else
+	{
 		pthread_mutex_unlock(&philo->args->wrt_eat[3]);
+		pthread_mutex_unlock(&(philo)->args->wrt_eat[4]);
+	}
 	pthread_mutex_unlock(&philo->args->wrt_eat[0]);
 		pthread_mutex_lock(&philo->args->wrt_eat[3]);
 	if (!philo->args->end)
